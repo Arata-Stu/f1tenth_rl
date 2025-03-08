@@ -36,14 +36,15 @@ class SACAgent(BaseAgent):
         if ckpt_path:
             self.load(ckpt_path)
 
-    def select_action(self, scans: torch.Tensor, vehicle_info: torch.Tensor, evaluate: bool=False) -> np.ndarray:
-        state = torch.cat([scans, vehicle_info], dim=-1)
+    def select_action(self, scans: torch.Tensor, vehicle_info: torch.Tensor = None, evaluate: bool=False) -> np.ndarray:
+        state = scans if vehicle_info is None else torch.cat([scans, vehicle_info], dim=-1)
         with torch.no_grad():
             if evaluate:
                 _, _, action = self.actor.sample(state)
             else:
                 action, _, _ = self.actor.sample(state)
         return action.cpu().numpy()[0]
+
 
     def update(self, buffer, batch_size: int=64):
         sample = buffer.sample(batch_size)
