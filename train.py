@@ -29,7 +29,7 @@ def main(config: DictConfig):
     steer_range = param.s_max
     speed_range = param.v_max
     convert_action_ = partial(convert_action, steer_range=steer_range, speed_range=speed_range)
-    convert_scan_ = partial(convert_scan, scan_range=30.0)
+    convert_scan_ = partial(convert_scan, max_range=30.0)
 
     # マップの設定
     map_cfg = config.envs.map
