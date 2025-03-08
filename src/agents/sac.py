@@ -36,8 +36,12 @@ class SACAgent(BaseAgent):
         if ckpt_path:
             self.load(ckpt_path)
 
-    def select_action(self, scans: torch.Tensor, vehicle_info: torch.Tensor = None, evaluate: bool=False) -> np.ndarray:
-        state = scans if vehicle_info is None else torch.cat([scans, vehicle_info], dim=-1)
+    def select_action(self, scans: torch.Tensor, vehicle_info: Union[torch.Tensor, None] = None, evaluate: bool=False) -> np.ndarray:
+        if self.vehicle_info_dim > 0 and vehicle_info is not None:
+            state = torch.cat([scans, vehicle_info], dim=-1)
+        else:
+            state = scans
+
         with torch.no_grad():
             if evaluate:
                 _, _, action = self.actor.sample(state)
@@ -45,25 +49,29 @@ class SACAgent(BaseAgent):
                 action, _, _ = self.actor.sample(state)
         return action.cpu().numpy()[0]
 
-
     def update(self, buffer, batch_size: int=64):
         sample = buffer.sample(batch_size)
         scans = torch.FloatTensor(sample["scans"]).to(self.device)
-        vehicle_info = torch.FloatTensor(sample["vehicle_info"]).to(self.device)
         action = torch.FloatTensor(sample["action"]).to(self.device)
         reward = torch.FloatTensor(sample["reward"]).to(self.device)
-        next_next_scans = torch.FloatTensor(sample["next_scans"]).to(self.device)
-        next_vehicle_info = torch.FloatTensor(sample["next_vehicle_info"]).to(self.device)
+        next_scans = torch.FloatTensor(sample["next_scans"]).to(self.device)
         done = torch.FloatTensor(sample["done"]).to(self.device)
 
-        next_state = torch.cat([next_next_scans, next_vehicle_info], dim=-1)
+        if self.vehicle_info_dim > 0:
+            vehicle_info = torch.FloatTensor(sample["vehicle_info"]).to(self.device)
+            next_vehicle_info = torch.FloatTensor(sample["next_vehicle_info"]).to(self.device)
+            state = torch.cat([scans, vehicle_info], dim=-1)
+            next_state = torch.cat([next_scans, next_vehicle_info], dim=-1)
+        else:
+            state = scans
+            next_state = next_scans
+
         with torch.no_grad():
             next_action, next_log_prob, _ = self.actor.sample(next_state)
             target_q1, target_q2 = self.critic_target(next_state, next_action)
             target_q = torch.min(target_q1, target_q2) - torch.exp(self.log_alpha) * next_log_prob
             target_q = reward + (1 - done) * self.gamma * target_q
 
-        state = torch.cat([scans, vehicle_info], dim=-1)
         current_q1, current_q2 = self.critic(state, action)
         critic_loss = F.mse_loss(current_q1, target_q) + F.mse_loss(current_q2, target_q)
 
