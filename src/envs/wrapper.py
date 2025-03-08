@@ -26,7 +26,7 @@ class F110Wrapper(gym.Wrapper):
         # Waypoint描画機能をレンダリングコールバックとして追加
         self.env.add_render_callback(self.render_waypoints)
 
-    def step(self, action):
+    def step(self, action, num_points=10):
         """
         環境を1ステップ進める。
 
@@ -39,6 +39,11 @@ class F110Wrapper(gym.Wrapper):
         """
         obs, reward, terminated, truncated, info = self.env.step(action)
         reward = 0.0
+
+        ## waypointを作成
+        current_pos = np.array([obs['poses_x'][0], obs['poses_y'][0]])
+        waypoint = self.map_manager.get_future_waypoints(current_pos, num_points=num_points)
+        info['waypoint'] = waypoint
 
         # spin
         if abs(obs['poses_theta'][0]) > 100.0:

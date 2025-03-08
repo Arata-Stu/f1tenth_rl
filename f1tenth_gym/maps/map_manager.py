@@ -26,7 +26,7 @@ MAP_DICT = {
 }
 
 class MapManager:
-    def __init__(self, map_name: str, map_dir: str=os.path.dirname(__file__), map_ext: str='.png'):
+    def __init__(self, map_name: str, map_dir: str=os.path.dirname(__file__), map_ext: str='.png', downsample=1):
         self.map_name = map_name
         self.map_ext = map_ext
         self.map_base_dir = os.path.join(map_dir, map_name)
@@ -38,6 +38,8 @@ class MapManager:
 
         speed=5.0
         self.waypoints = np.genfromtxt(self.center_line_path, delimiter=',', usecols=(0, 1,))
+        ## ダウンサンプル
+        self.waypoints = self.waypoints[::downsample]
         speeds = np.full((self.waypoints.shape[0], 1), speed)  # 速度の列を作成
         self.waypoints = np.column_stack((self.waypoints, speeds))  # x, y, 速度 の3列にする
 
@@ -95,6 +97,18 @@ class MapManager:
             x = (d1**2 - h**2)**0.5
 
         return x, h
+    
+    def get_future_waypoints(self, current_point, num_points=10):
+        idx, _ = self.get_trackline_segment(current_point)
+        
+        # インデックスのリストを作成（周回を考慮）
+        future_indices = [(idx + i) % len(self.waypoints) for i in range(num_points)]
+        
+        # インデックスに対応するウェイポイントを取得
+        future_wpts = self.waypoints[future_indices]
+        
+        return future_wpts
+
 
 
 

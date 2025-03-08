@@ -1,6 +1,7 @@
 map:
     name: IMS
     ext: .png
+    downsample: 1
 timestep: 0.01
 num_beams: 1080
 beam_fov: 4.7
