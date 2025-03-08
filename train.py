@@ -131,3 +131,14 @@ class Trainer:
             if self.use_wandb:
                 wandb.finish()
             print("Cleaned up resources.")
+
+@hydra.main(config_path="config", config_name="train", version_base="1.2")
+def main(cfg: DictConfig):
+    """ メイン関数 """
+    print(OmegaConf.to_yaml(cfg))
+    trainer = Trainer(cfg)
+    trainer.train()
+
+
+if __name__ == "__main__":
+    main()
