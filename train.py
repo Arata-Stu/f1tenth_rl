@@ -13,7 +13,7 @@ from src.agents.agents import get_agents
 from src.buffers.buffers import get_buffers
 from src.utils.helppers import convert_action, convert_scan
 
-@hydra.main(config_path="config", config_name="config", version_base="1.2")
+@hydra.main(config_path="config", config_name="train", version_base="1.2")
 def main(config: DictConfig):
     OmegaConf.to_container(config, resolve=True, throw_on_missing=True)
     print('------ Configuration ------')
