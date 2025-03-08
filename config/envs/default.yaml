@@ -1,0 +1,7 @@
+map:
+    name: IMS
+    ext: .png
+timestep: 0.01
+num_beams: 1080
+beam_fov: 4.7
+num_agents: 1
