@@ -339,16 +339,16 @@ class EnvRenderer(pyglet.window.Window):
 
         # self.score_label.text = 'Lap Time: {laptime:.2f}, Ego Lap Count: {count:.0f}'.format(laptime=obs['lap_times'][0], count=obs['lap_counts'][obs['ego_idx']])
 
-        def get_rgb_array(self):
-            """
-            現在のフレームバッファから RGB 配列を取得して返す。
-            """
-            # 描画後に描画バッファから画像データを取得
-            buffer = pyglet.image.get_buffer_manager().get_color_buffer()
-            image_data = buffer.get_image_data()
-            # 'RGB' チャンネルで読み込み。pitch は幅 * 3（チャネル数）となる
-            arr = np.frombuffer(image_data.get_data('RGB', image_data.width * 3), dtype=np.uint8)
-            arr = arr.reshape((image_data.height, image_data.width, 3))
-            # OpenGL は下から上へ描画しているため、配列を上下反転させる
-            arr = np.flipud(arr)
-            return arr
+    def get_rgb_array(self):
+        """
+        現在のフレームバッファから RGB 配列を取得して返す。
+        """
+        # 描画後に描画バッファから画像データを取得
+        buffer = pyglet.image.get_buffer_manager().get_color_buffer()
+        image_data = buffer.get_image_data()
+        # 'RGB' チャンネルで読み込み。pitch は幅 * 3（チャネル数）となる
+        arr = np.frombuffer(image_data.get_data('RGB', image_data.width * 3), dtype=np.uint8)
+        arr = arr.reshape((image_data.height, image_data.width, 3))
+        # OpenGL は下から上へ描画しているため、配列を上下反転させる
+        arr = np.flipud(arr)
+        return arr
