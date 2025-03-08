@@ -13,7 +13,7 @@ yaml_path = "./config/test.yaml"
 cfg = OmegaConf.load(yaml_path)
 # 車両のパラメータ
 param = cfg.vehicle
-map_manager = MapManager(map_name=cfg.envs.map.name, map_ext=cfg.envs.map.ext, downsample=cfg.envs.map.downsample) 
+map_manager = MapManager(map_name=cfg.envs.map.name, map_ext=cfg.envs.map.ext, speed=cfg.envs.map.speed, downsample=cfg.envs.map.downsample) 
 reward_manager = make_raward(reward_cfg=cfg.reward, map_manager=map_manager)
 
 # 環境の作成
