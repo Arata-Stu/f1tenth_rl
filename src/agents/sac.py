@@ -34,6 +34,8 @@ class SACAgent(BaseAgent):
         self.alpha_optimizer = optim.Adam([self.log_alpha], lr=alpha_lr)
         self.target_entropy = -action_dim
 
+        self.vehicle_info_dim = vehicle_info_dim
+
         if ckpt_path:
             self.load(ckpt_path)
 
