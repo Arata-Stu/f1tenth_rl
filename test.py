@@ -18,7 +18,7 @@ reward_manager = make_raward(reward_cfg=cfg.reward, map_manager=map_manager)
 
 # 環境の作成
 env = make_env(env_cfg=cfg.envs, map_manager=map_manager, param=param)
-obs, info = env.reset(index=300)
+obs, info = env.reset(index=0)
 num_agents = cfg.envs.num_agents
 
 wheelbase=(0.17145+0.15875)
