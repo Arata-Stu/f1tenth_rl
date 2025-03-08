@@ -3,8 +3,8 @@ from abc import ABC, abstractmethod
 
 class BaseAgent(ABC):
     def __init__(self,
-                 state_z: int,
-                 state_vec: int,
+                 scans_dim: int,
+                 vehicle_info_dim: int,
                  action_dim: int,
                  gamma: float=0.99,
                  tau: float=0.005,
@@ -13,7 +13,7 @@ class BaseAgent(ABC):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.gamma = gamma
         self.tau = tau
-        self.state_dim = state_z + state_vec
+        self.state_dim = scans_dim + vehicle_info_dim
         self.action_dim = action_dim
 
         self.actor = None  
@@ -22,7 +22,7 @@ class BaseAgent(ABC):
         self.critic_optimizer = None  
 
     @abstractmethod
-    def select_action(self, state_z: torch.Tensor, state_vec: torch.Tensor, evaluate: bool=False):
+    def select_action(self, scans: torch.Tensor, vehicle_info: torch.Tensor, evaluate: bool=False):
         """ 環境との相互作用時にアクションを選択するメソッド（サブクラスで実装） """
         pass
 

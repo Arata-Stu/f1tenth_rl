@@ -1,11 +1,10 @@
 from omegaconf import DictConfig
 from .sac import SACAgent
-from .td3 import TD3Agent
 
-def get_agents(agent_cfg: DictConfig, state_z_dim: int, state_vec_dim: int, action_dim: int):
+def get_agents(agent_cfg: DictConfig, scans_dim: int, vehicle_info_dim: int, action_dim: int):
     if agent_cfg.name == "SAC":
-        return SACAgent(state_z_dim=state_z_dim,
-                        state_vec_dim=state_vec_dim,
+        return SACAgent(scans_dim=scans_dim,
+                        vehicle_info_dim=vehicle_info_dim,
                         action_dim=action_dim,
                         actor_lr=agent_cfg.actor_lr,
                         critic_lr=agent_cfg.critic_lr,
