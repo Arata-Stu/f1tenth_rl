@@ -1,6 +1,8 @@
 import gymnasium as gym
 import numpy as np
 import math
+from pyglet.gl import GL_POINTS
+
 
 from f1tenth_gym.maps.map_manager import MapManager
 
@@ -19,6 +21,10 @@ class F110Wrapper(gym.Wrapper):
         super().__init__(env)
         self.ego_idx = env.ego_idx
         self.map_manager = map_manager
+
+        self.env.add_render_callback(self.render_callback)
+        # Waypoint描画機能をレンダリングコールバックとして追加
+        self.env.add_render_callback(self.render_waypoints)
 
     def step(self, action):
         """
@@ -109,3 +115,44 @@ class F110Wrapper(gym.Wrapper):
         環境を閉じる（リソース解放）。
         """
         self.env.close()
+
+    def render_callback(self, env_renderer):
+        # custom extra drawing function for camera update
+        e = env_renderer
+
+        # update camera to follow car
+        x = e.cars[0].vertices[::2]
+        y = e.cars[0].vertices[1::2]
+        top, bottom, left, right = max(y), min(y), min(x), max(x)
+
+        l = 800
+        e.left = left - l
+        e.right = right + l
+        e.top = top + l
+        e.bottom = bottom - l
+
+    def render_waypoints(self, renderer):
+    
+    # Waypointが設定されていない場合は何もしない
+        if self.map_manager.waypoints is None:
+            return
+        
+        # Waypoint座標の変換とスケーリング
+        points = np.vstack((self.map_manager.waypoints[:, 0], self.map_manager.waypoints[:, 1])).T
+        scaled_points = 50. * points  # スケーリング係数は状況に応じて調整
+    
+        # 各Waypointを描画
+        for i in range(points.shape[0]):
+            # 現在のターゲットWaypointは赤色で、それ以外は灰色で表示
+            color = [255, 255, 255] if self.waypoints_passed[i] else [255,255,255]
+
+            if len(self.drawn_waypoints) < points.shape[0]:
+                b = renderer.batch.add(1, GL_POINTS, None,
+                                   ('v3f/stream', [scaled_points[i, 0], scaled_points[i, 1], 0.]),
+                                   ('c3B/stream', color))  # 色を設定
+                self.drawn_waypoints.append(b)
+            else:
+                self.drawn_waypoints[i].vertices = [scaled_points[i, 0], scaled_points[i, 1], 0.]
+                # 既存のWaypointの色を更新するには、描画オブジェクトに直接色を設定する必要があります。
+                # 以下の行は、使用しているレンダリングシステムに応じて適切に調整する必要があります。
+                self.drawn_waypoints[i].colors = color
