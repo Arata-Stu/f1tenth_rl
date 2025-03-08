@@ -24,15 +24,15 @@ num_agents = cfg.envs.num_agents
 wheelbase=(0.17145+0.15875)
 planner = PurePursuitPlanner(wheelbase=wheelbase, map_manager=map_manager, lookahead=0.3 ,max_reacquire=20.) 
 
-actions = []
+
 # メインループ
 while True:
+    actions = []
     steer, speed = planner.plan(obs, gain=0.20)
     action = [steer, speed]
     actions.append(action)
     next_obs, reward, terminated, truncated, info = env.step(np.array(actions))
     reward += reward_manager.get_reward(obs=next_obs, pre_obs=obs)
-    print("reward:", reward)
     if terminated or truncated:
         print("terminated")
         break
