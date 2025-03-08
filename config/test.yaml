@@ -2,6 +2,7 @@ envs:
   map:
     name: IMS
     ext: .png
+    speed: 5.0
     downsample: 1
   timestep: 0.01
   num_beams: 1080

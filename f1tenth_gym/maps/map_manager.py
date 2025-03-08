@@ -26,7 +26,7 @@ MAP_DICT = {
 }
 
 class MapManager:
-    def __init__(self, map_name: str, map_dir: str=os.path.dirname(__file__), map_ext: str='.png', downsample=1):
+    def __init__(self, map_name: str, map_dir: str=os.path.dirname(__file__), map_ext: str='.png', speed: int=5.0, downsample: int=1):
         self.map_name = map_name
         self.map_ext = map_ext
         self.map_base_dir = os.path.join(map_dir, map_name)
@@ -36,7 +36,7 @@ class MapManager:
         self.center_line_path = os.path.join(self.map_base_dir, map_name + '_centerline.csv')
         self.race_line_path = os.path.join(self.map_base_dir, map_name + '_raceline.csv')
 
-        speed=5.0
+        speed=speed
         self.waypoints = np.genfromtxt(self.center_line_path, delimiter=',', usecols=(0, 1,))
         ## ダウンサンプル
         self.waypoints = self.waypoints[::downsample]
