@@ -5,7 +5,7 @@ from .wrapper import F110Wrapper
 from f1tenth_gym.maps.map_manager import MapManager
 
 def make_env(env_cfg: DictConfig, map_manager: MapManager,  param: Dict):
-    map_name = map_manager.map_yaml_path
+    map_name = map_manager.map_path
     max_ext = map_manager.map_ext
     num_beams = env_cfg.num_beams
     num_agents = env_cfg.num_agents

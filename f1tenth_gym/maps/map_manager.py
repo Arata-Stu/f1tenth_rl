@@ -30,6 +30,7 @@ class MapManager:
         self.map_name = map_name
         self.map_ext = map_ext
         self.map_base_dir = os.path.join(map_dir, map_name)
+        self.map_path = os.path.join(self.map_base_dir, map_name + "_map")
         self.map_img_path = os.path.join(self.map_base_dir, map_name + map_ext)
         self.map_yaml_path = os.path.join(self.map_base_dir, map_name + '_map.yaml')
         self.center_line_path = os.path.join(self.map_base_dir, map_name + '_centerline.csv')
