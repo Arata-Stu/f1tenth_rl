@@ -55,7 +55,7 @@ class F110Env(gym.Env):
             self.map_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'maps', 'levine.yaml')
         else:
             ## .yaml
-            self.map_path = self.map_name
+            self.map_path = self.map_name + '.yaml'
             
         self.map_ext = kwargs.get('map_ext', '.png')
         self.params = kwargs.get('params', {
