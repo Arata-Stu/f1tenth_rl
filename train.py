@@ -132,6 +132,40 @@ class Trainer:
                 wandb.finish()
             print("Cleaned up resources.")
 
+    def evaluate(self, num_eval_episodes):
+        """ エージェントの評価を行うメソッド
+        Args:
+            num_eval_episodes (int): 評価エピソード数
+        Returns:
+            float: 平均エピソード報酬
+        """
+        total_reward = 0.0
+        # 評価中は学習を無効にする
+        with torch.no_grad():
+            for episode in range(num_eval_episodes):
+                obs, _ = self.env.reset(index=0)
+                episode_reward = 0.0
+                done = False
+                while not done:
+                    # 評価用にエージェントの行動選択を行う（evaluateフラグをTrueに設定）
+                    scan_tensor = torch.tensor(
+                        self.convert_scan(obs["scans"][0]),
+                        dtype=torch.float32
+                    ).to(self.device).unsqueeze(0)
+                    
+                    action = self.convert_action(
+                        self.agent.select_action(scans=scan_tensor, vehicle_info=None, evaluate=True)
+                    )
+                    next_obs, reward, terminated, truncated, _ = self.env.step(np.array([action]))
+                    episode_reward += reward
+                    done = terminated or truncated
+                    obs = next_obs
+                total_reward += episode_reward
+
+        avg_reward = total_reward / num_eval_episodes
+        return avg_reward
+
+
 @hydra.main(config_path="config", config_name="train", version_base="1.2")
 def main(cfg: DictConfig):
     """ メイン関数 """
