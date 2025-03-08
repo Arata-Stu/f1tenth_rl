@@ -37,5 +37,7 @@ while True:
         print("terminated")
         break
 
+    obs = next_obs
+
 print("Simulation finished")
 env.close()
