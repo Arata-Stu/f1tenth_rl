@@ -10,3 +10,5 @@ scipy
 omegaconf
 hydra-core
 torch
+tensorboard
+wandb
