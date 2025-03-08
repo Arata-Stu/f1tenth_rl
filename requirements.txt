@@ -1,0 +1,12 @@
+numpy
+numba
+Pillow
+pyglet<1.5
+pyyaml
+gymnasium
+matplotlib
+scipy
+
+omegaconf
+hydra-core
+torch
