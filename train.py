@@ -24,18 +24,15 @@ class Trainer:
         self.writer = SummaryWriter(log_dir=config.get("log_dir", "./logs"))
         
         # WandB の初期化（ネットワーク切断時でも学習継続可能に）
-        try:
+        self.use_wandb = config.get("use_wandb", False)
+        if self.use_wandb:
             wandb.init(
                 project=config.get("wandb_project", "RL_Training"),
                 name=config.get("wandb_run_name", "run"),
                 mode=config.get("wandb_mode", "online"),  # オンライン or オフライン
                 config=dict(config)
             )
-            self.use_wandb = True
-        except Exception as e:
-            print(f"WandB initialization failed: {e}")
-            self.use_wandb = False
-        
+            
         param = config.vehicle
         self.convert_action = partial(convert_action, steer_range=param.s_max, speed_range=param.v_max)
         self.convert_scan = partial(convert_scan, max_range=30.0)

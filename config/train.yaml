@@ -13,6 +13,7 @@ save_ckpt_dir: ./ckpts/
 eval_interval: 10
 num_eval_episodes: 1
 
+use_wandb: False
 wandb_project: f1tenth
 wandb_run_name: ???
 wandb_mode: online
