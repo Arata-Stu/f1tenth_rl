@@ -84,7 +84,7 @@ class F110Wrapper(gym.Wrapper):
             positions = [[0, 0, 0] for _ in range(self.env.num_agents)]
 
         options = {
-            "positions": positions
+            "poses": np.array(positions)
         }
         obs, info = self.env.reset(seed=seed, options=options)
         return obs, info
