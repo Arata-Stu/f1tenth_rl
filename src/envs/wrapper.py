@@ -144,15 +144,8 @@ class F110Wrapper(gym.Wrapper):
         # 各Waypointを描画
         for i in range(points.shape[0]):
             # 現在のターゲットWaypointは赤色で、それ以外は灰色で表示
-            color = [255, 255, 255] if self.waypoints_passed[i] else [255,255,255]
-
-            if len(self.drawn_waypoints) < points.shape[0]:
-                b = renderer.batch.add(1, GL_POINTS, None,
-                                   ('v3f/stream', [scaled_points[i, 0], scaled_points[i, 1], 0.]),
-                                   ('c3B/stream', color))  # 色を設定
-                self.drawn_waypoints.append(b)
-            else:
-                self.drawn_waypoints[i].vertices = [scaled_points[i, 0], scaled_points[i, 1], 0.]
-                # 既存のWaypointの色を更新するには、描画オブジェクトに直接色を設定する必要があります。
-                # 以下の行は、使用しているレンダリングシステムに応じて適切に調整する必要があります。
-                self.drawn_waypoints[i].colors = color
+            color = [255, 255, 255] # 灰色
+            b = renderer.batch.add(1, GL_POINTS, None,
+                                ('v3f/stream', [scaled_points[i, 0], scaled_points[i, 1], 0.]),
+                                ('c3B/stream', color))  # 色を設定
+            
