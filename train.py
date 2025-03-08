@@ -66,7 +66,7 @@ def main(config: DictConfig):
             print(f"Episode {episode} started.")
             for step in range(num_steps):
                 scan = convert_scan_(obs["scans"][0])
-                scan_tensor = torch.tensor(scan, dtype=torch.float32).to(device)
+                scan_tensor = torch.tensor(scan, dtype=torch.float32).to(device).unsqueeze(0)
                 actions = []
                 action = agent.select_action(scans=scan_tensor, vehicle_info=None)
                 action = convert_action_(action=action)
@@ -76,7 +76,10 @@ def main(config: DictConfig):
                 next_scan = convert_scan_(next_obs["scans"][0])
 
                 done = terminated or truncated
-                buffer.add(scan, action, reward, next_scan, done)
+
+                vehicle_info = None
+                next_vehicle_info = None
+                buffer.add(scan, vehicle_info, action, reward, next_scan, next_vehicle_info, done)
 
                 episode_reward += reward
 
